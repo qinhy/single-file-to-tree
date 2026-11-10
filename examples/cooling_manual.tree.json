@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "source": {
+    "path": "examples/cooling_manual.md",
+    "text_view": "examples/cooling_manual.md",
+    "total_lines": 15,
+    "complete": true,
+    "warnings": []
+  },
+  "root": {
+    "id": "0",
+    "kind": "file",
+    "title": "Cooling System",
+    "origin": "explicit",
+    "range": {
+      "start_line": 1,
+      "end_line": 15
+    },
+    "summary": "Describes motor cooling, high-speed operation, thermal protection, and maintenance.",
+    "children": [
+      {
+        "id": "0.1",
+        "kind": "passage",
+        "title": "Cooling and temperature monitoring",
+        "origin": "inferred",
+        "range": {
+          "start_line": 2,
+          "end_line": 3
+        },
+        "summary": "Explains the cooling fan's role and motor temperature monitoring.",
+        "children": []
+      },
+      {
+        "id": "0.2",
+        "kind": "section",
+        "title": "Operation",
+        "origin": "explicit",
+        "range": {
+          "start_line": 5,
+          "end_line": 11
+        },
+        "summary": "Explains motor heat and fan behavior during operation, including thermal protection.",
+        "children": [
+          {
+            "id": "0.2.1",
+            "kind": "passage",
+            "title": "High-speed operation and fan behavior",
+            "origin": "inferred",
+            "range": {
+              "start_line": 6,
+              "end_line": 7
+            },
+            "summary": "Describes increased heat at high speed and fan operation while the motor is active.",
+            "children": []
+          },
+          {
+            "id": "0.2.2",
+            "kind": "section",
+            "title": "Thermal Protection",
+            "origin": "explicit",
+            "range": {
+              "start_line": 9,
+              "end_line": 11
+            },
+            "summary": "Describes the controller stop behavior and displayed alarm after reaching a temperature limit.",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "0.3",
+        "kind": "section",
+        "title": "Maintenance",
+        "origin": "explicit",
+        "range": {
+          "start_line": 13,
+          "end_line": 15
+        },
+        "summary": "Calls for inspection of fan and filter and prohibits bypassing thermal protection.",
+        "children": []
+      }
+    ]
+  }
+}
