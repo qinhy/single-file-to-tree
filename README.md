@@ -36,3 +36,17 @@ python scripts/validate_tree.py examples/cooling_manual.tree.json --text example
 ```
 
 The validator checks ranges and nesting only. It cannot prove that the LLM understood the source or captured every meaningful unit.
+
+## Explore the information tree visually
+
+Open `tools/tree-explorer.html` in a web browser. Use **Load tree JSON** to select the `.tree.json`, then **Load source file** to select the exact source text view. No web server, build step, or network access is needed. You can also drag-and-drop both files.
+
+The UI offers a collapsible hierarchy, line-span overview, selected-node summaries, source-line navigation, structural diagnostics, and a **keyword-only path preview** over tree titles and summaries. The latter is *not* LLM semantic question answering or goal-order planning.
+
+To bundle one tree and its source into a shareable standalone HTML file:
+
+```bash
+python scripts/build_viewer.py src/acl.tree.json --source src/acl.c -o acl-view.html
+```
+
+Open `acl-view.html` in any modern browser. The generated HTML embeds the full supplied source text, so **do not publish it** when source content is private or subject to distribution restrictions. The generic unbundled viewer does not upload files; all processing remains in the browser.

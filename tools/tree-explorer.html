@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Information Tree Explorer</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1220;--pane:#101e30;--pane2:#14243a;--line:#283a50;--text:#eaf1fa;--muted:#99adbf;--faint:#657e96;--a:#70baf5;--b:#9d8ef5;--green:#5ed8ae;--warn:#f2bd79;--red:#ee8a94}
+*{box-sizing:border-box}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0;font-size:14px;line-height:1.45}
+button,input{font:inherit}button{cursor:pointer}.app{max-width:1900px;margin:auto}.top{padding:19px 25px 15px;background:#101b2b;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,#2b75ac,#7568c7);display:grid;place-items:center;color:white;font-weight:800;font-size:19px}.brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:-.02em}.brand p{color:var(--muted);margin:2px 0 0;font-size:12px}
+.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:17px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#1c2e45;border:1px solid #38506c;border-radius:8px;padding:8px 13px;color:#e5effa;white-space:nowrap}.btn:hover{background:#26435f}.btn.primary{background:#235b88;border-color:#4484b3}.btn.ghost{background:transparent;border-color:var(--line)}.btn.small{font-size:12px;padding:5px 8px}.search{min-width:230px;flex:1 1 320px;background:#0e1929;color:var(--text);border:1px solid #36506a;border-radius:8px;padding:9px 12px;outline:none}.search:focus{border-color:var(--a)}.hidden{display:none!important}
+.stats{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-left:auto}.pill{font-size:12px;color:#bcd2e6;background:#172b42;border:1px solid #2a445d;border-radius:25px;padding:5px 9px;font-variant-numeric:tabular-nums}.pill.good{color:var(--green);border-color:#21554a}.pill.bad{color:var(--red);border-color:#63414f}
+.grid{display:grid;grid-template-columns:minmax(270px,330px) minmax(420px,1fr) minmax(380px,0.88fr);height:calc(100vh - 143px);min-height:610px;overflow:hidden}.panel{min-width:0;min-height:0;display:flex;flex-direction:column;border-right:1px solid var(--line)}.panel:last-child{border-right:0}.panel-head{padding:15px 17px;border-bottom:1px solid var(--line);background:#102036}.panel-title{font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px}.hint{font-size:12px;color:var(--muted);margin-top:4px}.scroll{overflow:auto;min-height:0;flex:1}.tree-scroll{padding:12px 8px 18px}.outline-node{display:flex;align-items:flex-start;gap:5px;min-height:29px;border-radius:6px;padding:3px 4px;margin:1px 0;cursor:pointer;border:1px solid transparent}.outline-node:hover{background:#192e45}.outline-node.selected{background:#1d3b57;border-color:#456d91}.outline-node.hit{box-shadow:inset 3px 0 var(--green)}.outline-node.trace:not(.hit){box-shadow:inset 3px 0 #598bb5}.outline-node.muted{opacity:.42}.exp{flex:0 0 16px;border:0;background:none;color:var(--muted);font-size:13px;padding:0;line-height:19px}.outline-name{flex:1;overflow-wrap:anywhere;font-size:12px;padding:1px 0}.kind{font-size:10px;border-radius:4px;color:#afc5da;background:#23394e;padding:1px 4px;flex-shrink:0}
+.main{min-width:0;padding:17px 18px 24px;overflow:auto;height:100%}.card{background:var(--pane);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:15px}.heading{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.heading h2{font-size:14px;margin:0}.heading .sub{font-size:12px;color:var(--muted)}.map-wrap{overflow:auto;background:#0b1727;border:1px solid #2d4055;border-radius:8px;padding:10px}.map{display:block}.map rect{stroke:#0b1727;stroke-width:1.4;cursor:pointer;transition:fill-opacity .12s}.map rect:hover{stroke:#cce9fb;stroke-width:2.2}.map text{font-size:11px;pointer-events:none;fill:#ecf5ff;font-weight:600}.legend{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:11px;margin-top:11px}.dot{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px}.breads{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:12px}.crumb{background:transparent;border:0;color:var(--a);padding:3px 1px;font-size:12px}.crumb:hover{text-decoration:underline}.meta{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.summary{font-size:13px;line-height:1.65;color:#d6e4f3}.children{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.child{background:#182f46;border:1px solid #334e65;border-radius:6px;padding:6px 9px;color:#bfd9f3;font-size:12px;text-align:left}.child:hover{background:#235074}.info{font-size:12px;color:var(--muted)}
+.code-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}.code-window{background:#091521;border:1px solid #293f55;border-radius:8px;overflow:auto;max-height:calc(100vh - 385px);min-height:260px}.code-line{display:flex;white-space:pre;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;color:#d9e6f6;padding-right:12px}.code-line:nth-child(even){background:#0c1b2b}.line-no{color:#68849c;user-select:none;text-align:right;flex:0 0 54px;border-right:1px solid #223b53;margin-right:13px;padding:0 10px 0 0}.code-line code{font:inherit;tab-size:4}.code-line.in-range{background:#17304a}.code-line.in-range .line-no{color:#8dc9f9}.code-line.focus{box-shadow:inset 3px 0 var(--green)}.code-window .empty{padding:20px;color:var(--muted)}.pager{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.pager span{font-size:11px;color:var(--muted)}.diagnostic{border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;border:1px solid #365067;background:#15273b}.diagnostic.good{color:#c1f5e1;border-color:#27594c}.diagnostic.warn{color:#ffdcaf;border-color:#6f4d2d}.diagnostic.bad{color:#ffc3ca;border-color:#6e3c48}.foot{font-size:11px;color:var(--faint);margin-top:10px}
+.empty-state{padding:50px 24px;text-align:center;color:var(--muted);max-width:560px;margin:auto}.empty-state h2{color:var(--text);font-size:18px}.empty-state code{color:#96caef}.checkbox{display:inline-flex;align-items:center;gap:5px;color:#adbed0;font-size:12px}.checkbox input{accent-color:#6daee1}.badge-quiet{font-size:10px;color:var(--muted)}.label-row{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:14px}
+@media(max-width:1200px){.grid{height:auto;overflow:visible;grid-template-columns:minmax(230px,300px) minmax(380px,1fr)}.source-panel{grid-column:1/-1;border-top:1px solid var(--line)}.code-window{max-height:520px}.tree-scroll{height:600px}}@media(max-width:720px){.grid{display:block;height:auto;overflow:visible}.panel{border-right:0;border-bottom:1px solid var(--line)}.tree-scroll{height:310px;min-height:250px}.main{padding:12px}.top{padding:14px}.search{min-width:150px}.stats{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand"><div class="logo">T</div><div><h1>Information Tree Explorer</h1><p>Navigate a hierarchical source map, inspect cited lines, and preview keyword-highlighted paths · Local and offline</p></div></div>
+  <div class="controls">
+    <button class="btn primary" id="treeBtn">↑ Load tree JSON</button><input hidden id="treeFile" type="file" accept=".json,application/json">
+    <button class="btn" id="sourceBtn">↑ Load source file</button><input hidden id="sourceFile" type="file">
+    <input class="search" type="search" id="search" placeholder="Search titles / summaries · try “permission”" aria-label="Search tree">
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+<div class="grid" id="workspace">
+  <aside class="panel">
+    <div class="panel-head"><div class="panel-title"><span>Source outline</span><span class="badge-quiet" id="foundCount"></span></div><div class="hint">Expand branches or select a node</div><div style="margin-top:9px;display:flex;gap:12px;align-items:center"><label class="checkbox"><input id="onlyPaths" type="checkbox"> Only matching paths</label><button class="btn ghost small" id="expandBtn">Expand</button><button class="btn ghost small" id="collapseBtn">Collapse</button></div></div>
+    <div class="scroll tree-scroll" id="outline"></div>
+  </aside>
+  <main class="panel"><div class="main">
+    <div class="card"><div class="heading"><h2>Hierarchical span map</h2><span class="sub">Width = source-line span; depth = hierarchy</span></div><div class="map-wrap" id="mapWrap"><svg class="map" id="map" role="img" aria-label="Tree overview visualization"></svg></div><div class="legend"><span><span class="dot" style="background:#397aaf"></span>Structural nodes</span><span><span class="dot" style="background:#5ed8ae"></span>Keyword matches</span><span><span class="dot" style="background:#8c80e8"></span>Selected node</span></div></div>
+    <div class="card" id="detail"><div class="empty-state">Choose a node to inspect its description and source range.</div></div>
+    <div class="card"><div class="heading"><h2>Tree diagnostics</h2><span class="sub">Structural checks only</span></div><div id="diagnostics"></div><div class="foot">The viewer cannot verify the semantic accuracy of summaries or prove full meaningful-content coverage. Keyword highlighting is not semantic QA or a task execution plan.</div></div>
+  </div></main>
+  <aside class="panel source-panel"><div class="panel-head"><div class="panel-title"><span>Source inspection</span><span class="badge-quiet" id="sourceStatus"></span></div><div class="hint">View lines associated with the selected node</div></div><div style="padding:13px 13px 20px;flex:1"><div class="code-head"><strong id="sourceTitle">No source loaded</strong><div class="pager"><button id="prevPage" class="btn small">← Prev</button><span id="pageText"></span><button id="nextPage" class="btn small">Next →</button></div></div><div class="code-window" id="code"><div class="empty">Load the source file to inspect line-level evidence.</div></div></div></aside>
+</div>
+</div>
+<script>
+'use strict';
+const PRELOADED_TREE = null;
+const PRELOADED_SOURCE = null;
+let doc=PRELOADED_TREE, sourceText=PRELOADED_SOURCE, sourceName=PRELOADED_SOURCE===null?'':String(PRELOADED_TREE?.source?.text_view||PRELOADED_TREE?.source?.path||'source').split('/').pop();
+let nodes=[], lookup=new Map(), collapsed=new Set(), selected=null, matches=new Set(), traces=new Set(), query='', viewStart=1, maxDepth=0;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function buildIndex(){
+ nodes=[];lookup=new Map();maxDepth=0;
+ if(!doc||!doc.root)return;
+ const visited=new Set();
+ function walk(n,parent,depth){
+   if(!n||typeof n!=='object'||visited.has(n))return;visited.add(n);
+   const x={...n,parent,depth,children:[]};x.title=String(n.title??'(untitled)');x.kind=String(n.kind??'?');x.summary=String(n.summary??''); nodes.push(x);lookup.set(x.id,x);maxDepth=Math.max(maxDepth,depth);
+   for(const child of Array.isArray(n.children)?n.children:[])x.children.push(walk(child,x,depth+1));
+   x.children=x.children.filter(Boolean);return x;
+ }
+ walk(doc.root,null,0);
+ collapsed=new Set(nodes.filter(n=>n.depth>=2&&n.children.length).map(n=>n.id));
+ selected=lookup.get('0')||nodes[0]||null;viewStart=1;updateSearch(false);renderAll();
+}
+function lineage(n){const path=[];for(let p=n;p;p=p.parent)path.unshift(p);return path;}
+function updateSearch(render=true){
+ query=$('search').value.trim().toLowerCase();matches=new Set();traces=new Set();
+ const stop=new Set(['a','an','the','of','to','in','for','and','on','is','it','how','why','what','with','does','do','can','when','which','from','at','by','or','this','that','be','as','into','are']);
+ const terms=query.split(/[^\p{L}\p{N}_]+/u).filter(t=>t.length>1&&!stop.has(t));
+ for(const n of nodes){
+   const hay=(n.title+' '+n.summary+' '+n.kind).toLowerCase();
+   if(query&&(hay.includes(query)||terms.length&&terms.every(t=>hay.includes(t)))){
+     matches.add(n.id);for(const ancestor of lineage(n))traces.add(ancestor.id);
+   }
+ }
+ if(query&&matches.size){for(const n of nodes)if(traces.has(n.id)&&n.children.length)collapsed.delete(n.id);}
+ $('foundCount').textContent=query?matches.size+' matched nodes':' '+nodes.length+' nodes';
+ if(render){renderOutline();renderMap();}
+}
+function renderAll(){renderStats();renderOutline();renderMap();renderDetails();renderCode();renderDiagnostics();}
+function renderStats(){
+ $('stats').innerHTML=`<span class="pill">${nodes.length} nodes</span><span class="pill">${maxDepth+1} levels</span><span class="pill">${doc?.source?.total_lines??'—'} lines</span>`;
+ $('sourceStatus').textContent=sourceText===null?'Not loaded':`${getSourceLines().length} lines`;
+}
+function renderOutline(){
+ const parent=$('outline');parent.innerHTML='';if(!nodes.length){parent.innerHTML='<div class="empty-state">Load a <code>.tree.json</code> file to start.</div>';return;}
+ const only=$('onlyPaths').checked&&query.length>0;
+ function make(n){
+   if(only&&!traces.has(n.id))return;
+   const row=document.createElement('div');row.className='outline-node'+(n.id===selected?.id?' selected':'')+(matches.has(n.id)?' hit':traces.has(n.id)?' trace':'')+(query&&!traces.has(n.id)?' muted':'');row.style.marginLeft=(n.depth*13)+'px';
+   const exp=document.createElement('button');exp.className='exp';exp.textContent=n.children.length?(collapsed.has(n.id)?'▸':'▾'):'·';exp.title=n.children.length?'Expand or collapse':'Leaf';exp.onclick=e=>{e.stopPropagation();if(collapsed.has(n.id))collapsed.delete(n.id);else collapsed.add(n.id);renderOutline()};
+   const name=document.createElement('span');name.className='outline-name';name.textContent=n.title||'(untitled)';name.title=n.summary||'';
+   const kind=document.createElement('span');kind.className='kind';kind.textContent=n.kind||'?';
+   row.append(exp,name,kind);row.onclick=()=>choose(n);parent.append(row);
+   if(!collapsed.has(n.id))for(const child of n.children)make(child);
+ }
+ make(nodes[0]);
+}
+function renderMap(){
+ const svg=$('map');svg.replaceChildren();if(!nodes.length)return;
+ const NS='http://www.w3.org/2000/svg';
+ const W=1850,H=(maxDepth+1)*48+8,left=7,usable=W-14;
+ svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ const rootStart=nodes[0].range?.start_line||1;const rootEnd=nodes[0].range?.end_line||rootStart;const total=Math.max(1,rootEnd-rootStart+1);
+ for(const n of nodes){
+   const a=n.range?.start_line??rootStart,b=n.range?.end_line??a;
+   const x=left+(a-rootStart)/total*usable;const w=Math.max(1.3,(b-a+1)/total*usable);const y=n.depth*48+4;
+   const g=document.createElementNS(NS,'g');const rect=document.createElementNS(NS,'rect');rect.setAttribute('x',x.toFixed(2));rect.setAttribute('y',y);rect.setAttribute('width',w.toFixed(2));rect.setAttribute('height',40);rect.setAttribute('rx',2.5);
+   const sel=selected?.id===n.id;const matched=matches.has(n.id);const traced=traces.has(n.id);
+   const palettes=['#276b9a','#326f9c','#366b96','#3c688f','#425f83','#485879','#4d5472'];
+   rect.setAttribute('fill',sel?'#8c80e8':matched?'#2c997b':query&&!traced?'#233549':traced?'#387daa':palettes[Math.min(n.depth,6)]);
+   rect.setAttribute('fill-opacity',query&&!traced?'.40':'1');
+   if(sel){rect.setAttribute('stroke','#dcd5ff');rect.setAttribute('stroke-width','2.5');}
+   const title=document.createElementNS(NS,'title');title.textContent=`${n.title} (${n.kind})\nL${a}–${b}\n${n.summary||''}`;g.append(rect,title);
+   if(w>55){const txt=document.createElementNS(NS,'text');txt.setAttribute('x',String(x+6));txt.setAttribute('y',String(y+24));txt.textContent=n.title.length>Math.floor((w-12)/6.5)?n.title.slice(0,Math.floor((w-18)/6.5))+'…':n.title;g.append(txt);}
+   g.addEventListener('click',()=>choose(n));svg.append(g);
+ }
+}
+function choose(n){selected=n;for(const p of lineage(n))collapsed.delete(p.id);viewStart=Math.max(1,n.range?.start_line||1);renderOutline();renderMap();renderDetails();renderCode();}
+function renderDetails(){
+ const box=$('detail');if(!selected){box.innerHTML='<div class="empty-state">Load a tree to inspect a node.</div>';return;}
+ const n=selected;const chain=lineage(n);const rng=n.range||{};
+ const nr=descCount(n);
+ box.innerHTML=`<div class="heading"><h2>Selected information unit</h2><span class="sub">${esc(n.id)}</span></div><div class="breads" id="breads"></div><h2 style="font-size:19px;margin:4px 0 8px">${esc(n.title)}</h2><p class="summary">${esc(n.summary||'No description provided.')}</p><div class="meta"><span class="pill">${esc(n.kind)}</span><span class="pill">${esc(n.origin)}</span><span class="pill">Lines ${rng.start_line??'—'}–${rng.end_line??'—'}</span><span class="pill">${n.children.length} direct children</span><span class="pill">${nr} descendants</span></div><div class="label-row">Direct child nodes</div><div class="children" id="children"></div>`;
+ const bread=$('breads');chain.forEach((v,i)=>{if(i){const sep=document.createElement('span');sep.textContent='›';sep.style.color='var(--faint)';bread.append(sep)}const b=document.createElement('button');b.className='crumb';b.textContent=v.title;b.onclick=()=>choose(v);bread.append(b)});
+ const ch=$('children');if(!n.children.length)ch.innerHTML='<span class="info">Leaf node — no finer subdivision in this tree.</span>';
+ else n.children.forEach(c=>{let b=document.createElement('button');b.className='child';b.textContent=c.title;b.title=`${c.kind} · lines ${c.range?.start_line}–${c.range?.end_line}`;b.onclick=()=>choose(c);ch.append(b)});
+}
+function descCount(n){return n.children.reduce((s,c)=>s+1+descCount(c),0)}
+function getSourceLines(){if(sourceText===null)return null;const a=sourceText.split(/\r\n|\n|\r/);if(a.length&&a[a.length-1]==='')a.pop();return a;}
+function renderCode(){
+ const area=$('code'),before=$('prevPage'),after=$('nextPage');if(!selected){area.innerHTML='<div class="empty">Select a node.</div>';return;}
+ const n=selected,r=n.range||{},src=getSourceLines(),from=r.start_line||1,to=r.end_line||from;
+ $('sourceTitle').textContent=sourceName||doc?.source?.text_view||'Source';
+ if(!src){area.innerHTML='<div class="empty">Load the source file to inspect the selected range. The tree references lines '+from+'–'+to+'.</div>';$('pageText').textContent='';before.disabled=after.disabled=true;return;}
+ viewStart=Math.min(Math.max(viewStart,Math.max(1,from)),Math.max(from,to));
+ const pageSize=185;const start=Math.max(1,from<=to?viewStart:from),end=Math.min(to,start+pageSize-1),upper=Math.min(src.length,end+5),lower=Math.max(1,start-5);
+ const frag=document.createDocumentFragment();for(let i=lower;i<=upper;i++){
+   const line=document.createElement('div');line.className='code-line'+(i>=from&&i<=to?' in-range':'')+(i===from?' focus':'');
+   const num=document.createElement('span');num.className='line-no';num.textContent=i;
+   const code=document.createElement('code');code.textContent=src[i-1]||' ';
+   line.append(num,code);frag.append(line);
+ }
+ area.replaceChildren(frag);area.scrollTop=0;
+ $('pageText').textContent=`${start}–${end} / ${to}`;
+ before.disabled=start<=from;after.disabled=end>=to;
+ before.onclick=()=>{viewStart=Math.max(from,start-pageSize);renderCode()};after.onclick=()=>{viewStart=Math.min(to,start+pageSize);renderCode()};
+}
+function validate(){
+ if(!doc?.root)return [{s:'warn',t:'No tree loaded.'}];
+ let errors=[],seen=new Set();const limit=doc?.source?.total_lines;
+ if(doc.schema_version!=='1.0')errors.push('Unsupported schema_version: '+String(doc.schema_version));
+ function check(n,expected,parent){
+   if(!n||typeof n!=='object'){errors.push('Invalid node '+expected);return null;}
+   if(n.id!==expected)errors.push(`Unexpected ID ${n.id}; expected ${expected}`);
+   if(seen.has(n.id))errors.push('Duplicate ID: '+n.id);seen.add(n.id);
+   for(const k of ['kind','title'])if(typeof n[k]!=='string'||!n[k].trim())errors.push(`Missing ${k}: ${expected}`);if(n.origin!=='explicit'&&n.origin!=='inferred')errors.push('Invalid origin: '+expected);
+   const a=n.range?.start_line,b=n.range?.end_line;
+   if(!Number.isInteger(a)||!Number.isInteger(b)||a<1||b<a){errors.push('Invalid line range: '+n.id);return null;}
+   if(parent&&(a<parent[0]||b>parent[1]))errors.push('Outside parent range: '+n.id);
+   if(Number.isInteger(limit)&&b>limit)errors.push('Beyond source end: '+n.id);
+   let last=0;(n.children||[]).forEach((c,i)=>{const range=check(c,expected+'.'+(i+1),[a,b]);if(range){if(range[0]<=last)errors.push('Overlapping siblings: '+n.id);last=range[1];}});
+   return [a,b];
+ }
+ const span=check(doc.root,'0',null);
+ if(Number.isInteger(limit)&&span&&(span[0]!==1||span[1]!==limit))errors.push('Root does not cover all declared lines.');
+ const res=[];res.push(errors.length?{s:'bad',t:`${errors.length} structural issue(s): ${errors.slice(0,5).join(' · ')}`}:{s:'good',t:`Tree structure valid: ${nodes.length} nodes, ordered sibling ranges, contained descendants, unique positional IDs.`});
+ const src=getSourceLines();if(src){const lineCount=src.length;if(Number.isInteger(limit)&&lineCount!==limit)res.push({s:'warn',t:`Source line count differs: tree declares ${limit}, loaded file has ${lineCount}. Check that the original source version matches.`});else res.push({s:'good',t:'Loaded source line count agrees with tree metadata.'});}
+ else res.push({s:'warn',t:'No source file loaded; source offsets cannot be independently checked.'});
+ if(src&&!errors.length){const leaf=new Set(),heads=new Set();for(const n of nodes){const a=n.range.start_line,b=n.range.end_line;if(n.children.length)heads.add(a);else for(let i=a;i<=b;i++)leaf.add(i);}
+   const delim=/^(?:[^\p{L}\p{N}]*|\[\[(?:PAGE \d+|\/?TABLE)\]\]|\[NO EXTRACTABLE TEXT.*)$/u,groups=[];let loose=0;
+   for(let i=1;i<=src.length;i++){if(leaf.has(i)||heads.has(i)||delim.test(src[i-1].trim()))continue;loose++;const g=groups[groups.length-1];if(g&&g[1]===i-1)g[1]=i;else groups.push([i,i]);}
+   if(loose)res.push({s:'warn',t:`${loose} content line(s) sit in no leaf: ${groups.slice(0,12).map(([a,b])=>a===b?'L'+a:'L'+a+'–'+b).join(', ')}${groups.length>12?', …':''}. Normal for the rest of a parent heading or signature; anything else was skipped by the tree.`});
+   else res.push({s:'good',t:'Every content line sits in a leaf or is the first line of a parent node.'});}
+ if(doc?.source?.warnings?.length)for(const w of doc.source.warnings)res.push({s:'warn',t:String(w)});
+ return res;
+}
+function renderDiagnostics(){$('diagnostics').innerHTML=validate().map(x=>`<div class="diagnostic ${x.s}">${esc(x.t)}</div>`).join('');}
+async function readFiles(files){
+ let tree=null,source=null;for(const f of files){
+   try {const t=await f.text();if(f.name.toLowerCase().endsWith('.json')){
+      const obj=JSON.parse(t);if(!obj?.root||!obj?.source)throw Error('Not a Single File to Tree JSON document.');tree=obj;
+    }else source={text:t,name:f.name};
+   }catch(e){alert('Cannot open '+f.name+': '+e.message)}
+ }
+ if(tree){doc=tree;if(!source){sourceText=null;sourceName=''}$('search').value='';$('onlyPaths').checked=false;}
+ if(source){sourceText=source.text;sourceName=source.name;}
+ if(tree)buildIndex();else if(source)renderAll();
+}
+$('treeBtn').onclick=()=>$('treeFile').click();$('sourceBtn').onclick=()=>$('sourceFile').click();
+$('treeFile').onchange=e=>readFiles(e.target.files);$('sourceFile').onchange=e=>readFiles(e.target.files);
+$('search').oninput=()=>updateSearch();$('onlyPaths').onchange=renderOutline;
+$('expandBtn').onclick=()=>{collapsed.clear();renderOutline()};$('collapseBtn').onclick=()=>{collapsed=new Set(nodes.filter(n=>n.children.length&&n.depth>0).map(n=>n.id));renderOutline()};
+document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();$('search').focus()}if(e.key==='Escape'&&document.activeElement===$('search')){$('search').value='';updateSearch();$('search').blur()}});
+document.addEventListener('dragover',e=>e.preventDefault());document.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer?.files?.length)readFiles([...e.dataTransfer.files])});
+if(doc)buildIndex();else renderAll();
+</script>
+</body>
+</html>
